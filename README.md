@@ -17,4 +17,6 @@ Library API is using PostgreSQL. For local development environment run the docke
 
 After docker run command check postgres instance on PowerShell with `docker ps` command.
 
+When database instance ready, in LibraryApp.Data path `update-database` in package manager console or `dotnet ef database update` in CLI
+
 After all these steps, the application is ready for use.
