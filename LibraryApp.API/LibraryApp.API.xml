@@ -1,0 +1,145 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>LibraryApp.API</name>
+    </assembly>
+    <members>
+        <member name="M:LibraryApp.API.Controllers.ArticlesController.GetArticles">
+            <summary>
+            Get all articles
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LibraryApp.API.Controllers.ArticlesController.GetArticle(System.Guid)">
+            <summary>
+            Get an article by Id
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:LibraryApp.API.Controllers.ArticlesController.CreateArticle(LibraryApp.API.Mapper.ArticleForCreationDto)">
+            <summary>
+            Create an article
+            </summary>
+            <param name="articleItem"></param>
+            <returns></returns>
+        </member>
+        <member name="M:LibraryApp.API.Controllers.ArticlesController.UpdateArticle(System.Guid,LibraryApp.API.Mapper.ArticleForUpdateDto)">
+            <summary>
+            Update an article by Id
+            </summary>
+            <param name="id"></param>
+            <param name="articleItem"></param>
+            <returns></returns>
+        </member>
+        <member name="M:LibraryApp.API.Controllers.ArticlesController.DeleteArticle(System.Guid)">
+            <summary>
+            Delete an article by Id
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:LibraryApp.API.Controllers.ArticlesController.SearchByReleaseDate(System.DateTime)">
+            <summary>
+            Search articles by release date
+            </summary>
+            <param name="releaseDate"></param>
+            <returns></returns>
+        </member>
+        <member name="M:LibraryApp.API.Controllers.BooksController.GetBooks(System.Guid)">
+            <summary>
+            Get books by authorId
+            </summary>
+            <param name="authorId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:LibraryApp.API.Controllers.BooksController.GetBooks(System.Guid,System.Guid)">
+            <summary>
+            Get books by authorId and bookId
+            </summary>
+            <param name="authorId"></param>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="P:LibraryApp.API.Mapper.ArticleDto.Id">
+            <summary>
+            The id of the Article
+            </summary>
+        </member>
+        <member name="P:LibraryApp.API.Mapper.ArticleDto.Title">
+            <summary>
+            The Title of the Article
+            </summary>
+        </member>
+        <member name="P:LibraryApp.API.Mapper.ArticleDto.Body">
+            <summary>
+            The Body of the Article
+            </summary>
+        </member>
+        <member name="P:LibraryApp.API.Mapper.ArticleDto.ReleaseDate">
+            <summary>
+            The Release Date of the Article
+            </summary>
+        </member>
+        <member name="P:LibraryApp.API.Mapper.ArticleDto.Author">
+            <summary>
+            The Author of the Article
+            </summary>
+        </member>
+        <member name="T:LibraryApp.API.Mapper.ArticleForCreationDto">
+            <summary>
+            An article for creation with Title, Body, ReleaseDate and AuthorId fields
+            </summary>
+        </member>
+        <member name="P:LibraryApp.API.Mapper.ArticleForCreationDto.Title">
+            <summary>
+            The Title of the Article
+            </summary>
+        </member>
+        <member name="P:LibraryApp.API.Mapper.ArticleForCreationDto.Body">
+            <summary>
+            The Body of the Article
+            </summary>
+        </member>
+        <member name="P:LibraryApp.API.Mapper.ArticleForCreationDto.ReleaseDate">
+            <summary>
+            The Release Date of the Article
+            </summary>
+        </member>
+        <member name="P:LibraryApp.API.Mapper.ArticleForCreationDto.AuthorId">
+            <summary>
+            The AuthorId of the Article
+            </summary>
+        </member>
+        <member name="T:LibraryApp.API.Mapper.ArticleForUpdateDto">
+            <summary>
+            An article for update with Id, Title, Body, ReleaseDate, AuthorId fields
+            </summary>
+        </member>
+        <member name="P:LibraryApp.API.Mapper.ArticleForUpdateDto.Id">
+            <summary>
+            The id of the Article
+            </summary>
+        </member>
+        <member name="P:LibraryApp.API.Mapper.ArticleForUpdateDto.Title">
+            <summary>
+            The Title of the Article
+            </summary>
+        </member>
+        <member name="P:LibraryApp.API.Mapper.ArticleForUpdateDto.Body">
+            <summary>
+            The Body of the Article
+            </summary>
+        </member>
+        <member name="P:LibraryApp.API.Mapper.ArticleForUpdateDto.ReleaseDate">
+            <summary>
+            The Release Date of the Article
+            </summary>
+        </member>
+        <member name="P:LibraryApp.API.Mapper.ArticleForUpdateDto.AuthorId">
+            <summary>
+            The AuthorId of the Article
+            </summary>
+        </member>
+    </members>
+</doc>

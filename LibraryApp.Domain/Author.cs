@@ -14,6 +14,7 @@ namespace LibraryApp.Domain
         [Required]
         public string Email { get; set; }
 
+        [MaxLength(500)]
         public string Address { get; set; }
 
         public ICollection<Article> Articles { get; set; }

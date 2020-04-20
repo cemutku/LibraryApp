@@ -10,6 +10,7 @@ namespace LibraryApp.Domain
         [Required]
         public string Name { get; set; }
 
+        [MaxLength(500)]
         public string Publisher { get; set; }
 
         [Required]

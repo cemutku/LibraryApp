@@ -27,6 +27,10 @@ namespace LibraryApp.API.Controllers
                 ?? throw new ArgumentNullException(nameof(mapper));
         }
 
+        /// <summary>
+        /// Get all articles
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -44,6 +48,11 @@ namespace LibraryApp.API.Controllers
             }
         }
 
+        /// <summary>
+        /// Get an article by Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -70,6 +79,11 @@ namespace LibraryApp.API.Controllers
             }
         }
 
+        /// <summary>
+        /// Create an article
+        /// </summary>
+        /// <param name="articleItem"></param>
+        /// <returns></returns>
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -90,6 +104,12 @@ namespace LibraryApp.API.Controllers
             }
         }
 
+        /// <summary>
+        /// Update an article by Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="articleItem"></param>
+        /// <returns></returns>
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -99,7 +119,7 @@ namespace LibraryApp.API.Controllers
         {
             try
             {
-                if (id != articleItem.id)
+                if (id != articleItem.Id)
                 {
                     return BadRequest();
                 }
@@ -123,6 +143,11 @@ namespace LibraryApp.API.Controllers
             }
         }
 
+        /// <summary>
+        /// Delete an article by Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -149,6 +174,11 @@ namespace LibraryApp.API.Controllers
             }
         }
 
+        /// <summary>
+        /// Search articles by release date
+        /// </summary>
+        /// <param name="releaseDate"></param>
+        /// <returns></returns>
         [HttpGet("search")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

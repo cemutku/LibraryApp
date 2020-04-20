@@ -25,6 +25,11 @@ namespace LibraryApp.API.Controllers
                 ?? throw new ArgumentNullException(nameof(mapper));
         }
 
+        /// <summary>
+        /// Get books by authorId
+        /// </summary>
+        /// <param name="authorId"></param>
+        /// <returns></returns>
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -42,6 +47,12 @@ namespace LibraryApp.API.Controllers
             }
         }
 
+        /// <summary>
+        /// Get books by authorId and bookId
+        /// </summary>
+        /// <param name="authorId"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
