@@ -4,12 +4,16 @@ using LibraryApp.Data;
 using LibraryApp.Data.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 
 namespace LibraryApp.API
@@ -26,10 +30,53 @@ namespace LibraryApp.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services.AddControllers(setupAction =>
+            {
+                setupAction.Filters.Add(
+                    new ProducesResponseTypeAttribute(StatusCodes.Status400BadRequest));
+                setupAction.Filters.Add(
+                    new ProducesResponseTypeAttribute(StatusCodes.Status406NotAcceptable));
+                setupAction.Filters.Add(
+                    new ProducesResponseTypeAttribute(StatusCodes.Status500InternalServerError));
+                setupAction.Filters.Add(
+                    new ProducesDefaultResponseTypeAttribute());
+
+                setupAction.ReturnHttpNotAcceptable = true;
+
+                setupAction.OutputFormatters.Add(new XmlSerializerOutputFormatter());
+
+                var textJsonOutputFormatter = setupAction.OutputFormatters
+                    .OfType<SystemTextJsonOutputFormatter>().FirstOrDefault();
+
+                if (textJsonOutputFormatter != null)
+                {
+                    if (textJsonOutputFormatter.SupportedMediaTypes.Contains("text/json"))
+                    {
+                        textJsonOutputFormatter.SupportedMediaTypes.Remove("text/json");
+                    }
+                }
+            });
 
             services.AddDbContext<LibraryAppDbContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("LibraryContext")));
+
+            services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.InvalidModelStateResponseFactory = actionContext =>
+                {
+                    var actionExecutingContext =
+                        actionContext as Microsoft.AspNetCore.Mvc.Filters.ActionExecutingContext;
+
+                    // Check validation errors 422
+                    if (actionContext.ModelState.ErrorCount > 0
+                        && actionExecutingContext?.ActionArguments.Count == actionContext.ActionDescriptor.Parameters.Count)
+                    {
+                        return new UnprocessableEntityObjectResult(actionContext.ModelState);
+                    }
+
+                    return new BadRequestObjectResult(actionContext.ModelState);
+                };
+            });
 
             services.AddScoped<ILibraryAppDataRepository, LibraryAppDataRepository>();
 

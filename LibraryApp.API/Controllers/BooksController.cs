@@ -9,7 +9,8 @@ using System.Threading.Tasks;
 
 namespace LibraryApp.API.Controllers
 {
-    [Route("api/library/{authorId}/books")]
+    [Produces("application/json", "application/xml")]
+    [Route("api/authors/{authorId}/books")]
     [ApiController]
     public class BooksController : ControllerBase
     {
@@ -32,7 +33,6 @@ namespace LibraryApp.API.Controllers
         /// <returns></returns>
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<List<BookDto>>> GetBooks(Guid authorId)
         {
             try
@@ -56,7 +56,6 @@ namespace LibraryApp.API.Controllers
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<BookDto>> GetBooks(Guid authorId, Guid id)
         {
             try

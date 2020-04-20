@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LibraryApp.API.Controllers
 {
+    [Produces("application/json", "application/xml")]
     [Route("api/[controller]")]
     [ApiController]
     public class ArticlesController : ControllerBase
@@ -33,7 +34,6 @@ namespace LibraryApp.API.Controllers
         /// <returns></returns>
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<List<ArticleDto>>> GetArticles()
         {
             try
@@ -56,7 +56,6 @@ namespace LibraryApp.API.Controllers
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [Route("{id}", Name = "GetArticle")]
         public async Task<ActionResult<ArticleDto>> GetArticle(Guid id)
         {
@@ -85,8 +84,9 @@ namespace LibraryApp.API.Controllers
         /// <param name="articleItem"></param>
         /// <returns></returns>
         [HttpPost]
+        [Consumes("application/json")]
         [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         public async Task<IActionResult> CreateArticle([FromBody] ArticleForCreationDto articleItem)
         {
             try
@@ -111,10 +111,10 @@ namespace LibraryApp.API.Controllers
         /// <param name="articleItem"></param>
         /// <returns></returns>
         [HttpPut("{id}")]
+        [Consumes("application/json")]
         [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         public async Task<ActionResult<ArticleDto>> UpdateArticle(Guid id, [FromBody] ArticleForUpdateDto articleItem)
         {
             try
@@ -151,7 +151,6 @@ namespace LibraryApp.API.Controllers
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> DeleteArticle(Guid id)
         {
             try
@@ -182,7 +181,6 @@ namespace LibraryApp.API.Controllers
         [HttpGet("search")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<List<ArticleDto>>> SearchByReleaseDate(DateTime releaseDate)
         {
             try
