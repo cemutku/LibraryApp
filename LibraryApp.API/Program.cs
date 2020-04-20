@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using NLog.Web;
 using System;
 
 namespace LibraryApp.API
@@ -12,33 +12,50 @@ namespace LibraryApp.API
     {
         public static void Main(string[] args)
         {
-            var host = CreateHostBuilder(args).Build();
+            var logger = NLogBuilder
+                .ConfigureNLog("nlog.config")
+                .GetCurrentClassLogger();
 
-            // migrae database
-            using (var scope = host.Services.CreateScope())
+            try
             {
-                try
-                {
-                    var context = scope.ServiceProvider.GetService<LibraryAppDbContext>();
-                    context.Database.Migrate();
-                }
-                catch (Exception ex)
-                {
+                logger.Info("Initializing application...");
+                var host = CreateHostBuilder(args).Build();
 
-                    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-                    logger.LogError(ex, "An error occured while migrating the database");
+                // migrate database
+                logger.Info("Initializing migration...");
+                using (var scope = host.Services.CreateScope())
+                {
+                    try
+                    {
+                        var context = scope.ServiceProvider.GetService<LibraryAppDbContext>();
+                        context.Database.Migrate();
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.Error(ex, "An error occured while migrating the database");
+                    }
                 }
+
+                // run app
+                host.Run();
             }
-
-            // run app
-            host.Run();
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Application stopped due to exception");
+                throw;
+            }
+            finally
+            {
+                NLog.LogManager.Shutdown();
+            }
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStartup<Startup>();
+                    webBuilder.UseStartup<Startup>()
+                    .UseNLog();
                 });
     }
 }

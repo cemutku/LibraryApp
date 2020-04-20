@@ -8,6 +8,7 @@ using LibraryApp.Data.Repositories;
 using LibraryApp.Domain;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace LibraryApp.API.Controllers
 {
@@ -18,14 +19,20 @@ namespace LibraryApp.API.Controllers
     {
         private readonly ILibraryAppDataRepository _libraryAppDataRepository;
         private readonly IMapper _mapper;
+        private readonly ILogger<ArticlesController> _logger;
 
-        public ArticlesController(ILibraryAppDataRepository  libraryAppDataRepository, IMapper mapper)
+        public ArticlesController(ILibraryAppDataRepository libraryAppDataRepository,
+            IMapper mapper,
+            ILogger<ArticlesController> logger)
         {
             this._libraryAppDataRepository = libraryAppDataRepository
                 ?? throw new ArgumentNullException(nameof(libraryAppDataRepository));
 
             this._mapper = mapper
                 ?? throw new ArgumentNullException(nameof(mapper));
+
+            this._logger = logger
+                ?? throw new ArgumentNullException(nameof(logger));
         }
 
         /// <summary>
@@ -65,6 +72,7 @@ namespace LibraryApp.API.Controllers
 
                 if (article == null)
                 {
+                    _logger.LogInformation($"Article with id {id} was not found in the database.");
                     return NotFound();
                 }
 
@@ -72,8 +80,9 @@ namespace LibraryApp.API.Controllers
 
                 return Ok(articleDto);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogCritical($"Error occured while getting the article with id {id}", ex);                
                 return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Error");
             }
         }
