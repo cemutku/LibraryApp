@@ -1,4 +1,6 @@
-﻿using LibraryApp.Domain;
+﻿using LibraryApp.API.ResourceParameters;
+using LibraryApp.Data.ResourceParameters;
+using LibraryApp.Domain;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -40,6 +42,19 @@ namespace LibraryApp.Data.Repositories
         {
             return await _libraryAppDbContext.Articles.Include(a => a.Author).ToListAsync();
         }
+
+        public async Task<PagedList<Article>> GetArticlesAsync(ArticlesResourceParameters articlesResourceParameters)
+        {
+            var queryableArticles = _libraryAppDbContext.Articles.AsQueryable();
+
+            queryableArticles = _libraryAppDbContext.Articles
+                .Include(a => a.Author);
+
+            return await PagedList<Article>.Create(queryableArticles,
+                articlesResourceParameters.PageNumber,
+                articlesResourceParameters.PageSize);
+        }
+
 
         public async Task<List<Article>> GetArticlesByReleaseDateAsync(DateTime date)
         {

@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using AutoMapper;
+using LibraryApp.API.Helpers;
 using LibraryApp.API.Mapper;
+using LibraryApp.API.ResourceParameters;
 using LibraryApp.Data.Repositories;
 using LibraryApp.Domain;
 using Microsoft.AspNetCore.Http;
@@ -39,14 +42,41 @@ namespace LibraryApp.API.Controllers
         /// Get all articles
         /// </summary>
         /// <returns></returns>
-        [HttpGet]
+        [HttpGet(Name = "GetArticles")]        
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<List<ArticleDto>>> GetArticles()
+        public async Task<ActionResult<List<ArticleDto>>> GetArticles([FromQuery] ArticlesResourceParameters articlesResourceParameters)
         {
             try
             {
-                var articles = await _libraryAppDataRepository.GetArticlesAsync();
+                var articles = await _libraryAppDataRepository.GetArticlesAsync(articlesResourceParameters);
+
+                var previousPageLink = articles.HasPrevious 
+                    ? CreateArticlesResourceUri(articlesResourceParameters, ResourceUriType.PreviousPage) 
+                    : null;
+
+                var nextPageLink = articles.HasNext 
+                    ? CreateArticlesResourceUri(articlesResourceParameters, ResourceUriType.NextPage) 
+                    : null;
+
+                var paginationMetadata = new
+                {
+                    totalCount = articles.TotalCount,
+                    pageSize = articles.PageSize,
+                    currentPage = articles.CurrentPage,
+                    totalPages = articles.TotalPages,
+                    previousPageLink,
+                    nextPageLink
+                };
+
+                Response.Headers.Add("X-Pagination", 
+                    JsonSerializer.Serialize(paginationMetadata,
+                    new JsonSerializerOptions() 
+                    { 
+                        Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping 
+                    }));
+
                 var articleDtos = _mapper.Map<List<ArticleDto>>(articles);
+
                 return Ok(articleDtos);
             }
             catch (Exception)
@@ -206,6 +236,35 @@ namespace LibraryApp.API.Controllers
             catch (Exception)
             {
                 return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Error");
+            }
+        }
+
+        private string CreateArticlesResourceUri(ArticlesResourceParameters articlesResourceParameters, ResourceUriType resourceUriType)
+        {
+            switch (resourceUriType)
+            {
+                case ResourceUriType.PreviousPage:
+                    return Url.Link("GetArticles",
+                      new
+                      {
+                          pageNumber = articlesResourceParameters.PageNumber - 1,
+                          pageSize = articlesResourceParameters.PageSize,
+                      });
+                case ResourceUriType.NextPage:
+                    return Url.Link("GetArticles",
+                      new
+                      {
+                          pageNumber = articlesResourceParameters.PageNumber + 1,
+                          pageSize = articlesResourceParameters.PageSize,
+                      });
+
+                default:
+                    return Url.Link("GetArticles",
+                    new
+                    {
+                        pageNumber = articlesResourceParameters.PageNumber,
+                        pageSize = articlesResourceParameters.PageSize,
+                    });
             }
         }
     }

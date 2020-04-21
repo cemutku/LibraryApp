@@ -4,7 +4,7 @@
         <name>LibraryApp.API</name>
     </assembly>
     <members>
-        <member name="M:LibraryApp.API.Controllers.ArticlesController.GetArticles">
+        <member name="M:LibraryApp.API.Controllers.ArticlesController.GetArticles(LibraryApp.API.ResourceParameters.ArticlesResourceParameters)">
             <summary>
             Get all articles
             </summary>

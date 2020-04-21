@@ -1,4 +1,6 @@
-﻿using LibraryApp.Domain;
+﻿using LibraryApp.API.ResourceParameters;
+using LibraryApp.Data.ResourceParameters;
+using LibraryApp.Domain;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -13,6 +15,9 @@ namespace LibraryApp.Data.Repositories
         Task<bool> SaveChangesAsync();
 
         Task<List<Article>> GetArticlesAsync();
+
+        Task<PagedList<Article>> GetArticlesAsync(ArticlesResourceParameters articlesResourceParameters);
+
         Task<List<Article>> GetArticlesByReleaseDateAsync(DateTime date);
 
         Task<Article> GetArticleAsync(Guid id);
