@@ -58,7 +58,7 @@ namespace LibraryApp.API
             });
 
             services.AddDbContext<LibraryAppDbContext>(options =>
-                options.UseNpgsql(Configuration.GetConnectionString("LibraryContext")));
+                options.UseNpgsql(Configuration.GetConnectionString("LibraryConnection")));
 
             services.Configure<ApiBehaviorOptions>(options =>
             {

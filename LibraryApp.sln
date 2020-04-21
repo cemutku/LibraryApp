@@ -1,13 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26124.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30011.22
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryApp.API", "LibraryApp.API\LibraryApp.API.csproj", "{F2234037-6DE4-4738-BC9C-38CFF311AB80}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibraryApp.API", "LibraryApp.API\LibraryApp.API.csproj", "{F2234037-6DE4-4738-BC9C-38CFF311AB80}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryApp.Domain", "LibraryApp.Domain\LibraryApp.Domain.csproj", "{65C28EC1-D17F-4DDB-A055-2B4A3576771B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibraryApp.Domain", "LibraryApp.Domain\LibraryApp.Domain.csproj", "{65C28EC1-D17F-4DDB-A055-2B4A3576771B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryApp.Data", "LibraryApp.Data\LibraryApp.Data.csproj", "{3A6F0341-8EF9-485E-8AEA-A1EBCA444E26}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibraryApp.Data", "LibraryApp.Data\LibraryApp.Data.csproj", "{3A6F0341-8EF9-485E-8AEA-A1EBCA444E26}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{CF4B87A1-298E-4905-876D-89858CABF900}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,9 +19,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{F2234037-6DE4-4738-BC9C-38CFF311AB80}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -58,5 +57,23 @@ Global
 		{3A6F0341-8EF9-485E-8AEA-A1EBCA444E26}.Release|x64.Build.0 = Release|Any CPU
 		{3A6F0341-8EF9-485E-8AEA-A1EBCA444E26}.Release|x86.ActiveCfg = Release|Any CPU
 		{3A6F0341-8EF9-485E-8AEA-A1EBCA444E26}.Release|x86.Build.0 = Release|Any CPU
+		{CF4B87A1-298E-4905-876D-89858CABF900}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF4B87A1-298E-4905-876D-89858CABF900}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF4B87A1-298E-4905-876D-89858CABF900}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{CF4B87A1-298E-4905-876D-89858CABF900}.Debug|x64.Build.0 = Debug|Any CPU
+		{CF4B87A1-298E-4905-876D-89858CABF900}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{CF4B87A1-298E-4905-876D-89858CABF900}.Debug|x86.Build.0 = Debug|Any CPU
+		{CF4B87A1-298E-4905-876D-89858CABF900}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF4B87A1-298E-4905-876D-89858CABF900}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF4B87A1-298E-4905-876D-89858CABF900}.Release|x64.ActiveCfg = Release|Any CPU
+		{CF4B87A1-298E-4905-876D-89858CABF900}.Release|x64.Build.0 = Release|Any CPU
+		{CF4B87A1-298E-4905-876D-89858CABF900}.Release|x86.ActiveCfg = Release|Any CPU
+		{CF4B87A1-298E-4905-876D-89858CABF900}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7E8A82A1-CBE1-4036-9834-A6E397839B09}
 	EndGlobalSection
 EndGlobal
