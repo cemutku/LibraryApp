@@ -1,0 +1,40 @@
+version: '3.4'
+
+services:
+  postgresdev:
+    image: postgres:latest
+    restart: always
+    ports:
+      - '5432:5432'
+    restart: always
+    volumes:
+      - db_volume:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: 'postgres'
+      POSTGRES_PASSWORD: 'P@123'
+    networks:
+      - libraryapp-dev-iso
+
+  web.api:
+    container_name: 'libraryaspnetcoreapp'
+    image: 'libraryaspnetcoreapp'
+    depends_on:
+      - 'postgresdev'
+    build:
+      context: .
+      dockerfile: LibraryApp.API/libraryAppDev.dockerfile
+    ports:
+      - '5000:5000'
+    environment:
+        'ConnectionStrings__LibraryConnection': "host=postgresdev;port=5432;database=LibraryTestDb;username=postgres;password=P@123;Pooling=true;"
+    volumes: 
+       - '.:/app'
+    networks:
+        libraryapp-dev-iso:
+
+volumes:
+  db_volume:
+
+networks:
+  libraryapp-dev-iso:
+    driver: bridge

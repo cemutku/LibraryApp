@@ -123,7 +123,7 @@ namespace LibraryApp.API
             app.UseSwaggerUI(setupAction =>
             {
                 setupAction.SwaggerEndpoint(
-                    "/swagger/LibraryAppOpenAPISpecification/swagger.json", 
+                    "/swagger/LibraryAppOpenAPISpecification/swagger.json",
                     "Library API");
 
                 setupAction.RoutePrefix = "";

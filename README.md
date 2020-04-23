@@ -20,3 +20,7 @@ After docker run command check postgres instance on PowerShell with `docker ps` 
 When database instance ready, in LibraryApp.Data path `update-database` in package manager console or `dotnet ef database update` in CLI
 
 After all these steps, the application is ready for use.
+
+## Alternative development environment (docker-compose)
+
+For development and dotnet watcher run the `docker-compose -f docker-compose.dev.yml up` in /LibraryApp directory, than hit the http://localhost:5000/index.html and check the API methods in swaggerui
