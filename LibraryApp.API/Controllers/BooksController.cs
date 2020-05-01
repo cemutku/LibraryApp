@@ -3,6 +3,7 @@ using LibraryApp.API.Mapper;
 using LibraryApp.Data.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -16,14 +17,18 @@ namespace LibraryApp.API.Controllers
     {
         private readonly ILibraryAppDataRepository _libraryAppDataRepository;
         private readonly IMapper _mapper;
+        private readonly ILogger _logger;
 
-        public BooksController(ILibraryAppDataRepository libraryAppDataRepository, IMapper mapper)
+        public BooksController(ILibraryAppDataRepository libraryAppDataRepository, IMapper mapper, ILogger logger)
         {
             this._libraryAppDataRepository = libraryAppDataRepository
                 ?? throw new ArgumentNullException(nameof(libraryAppDataRepository));
 
             this._mapper = mapper
                 ?? throw new ArgumentNullException(nameof(mapper));
+
+            this._logger = logger
+                ?? throw new ArgumentNullException(nameof(logger));
         }
 
         /// <summary>
@@ -35,16 +40,9 @@ namespace LibraryApp.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<List<BookDto>>> GetBooks(Guid authorId)
         {
-            try
-            {
-                var books = await _libraryAppDataRepository.GetBooksByAuthorIdAsync(authorId);
-                var bookDtos = _mapper.Map<List<BookDto>>(books);
-                return Ok(bookDtos);
-            }
-            catch (Exception)
-            {
-                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Error");
-            }
+            var books = await _libraryAppDataRepository.GetBooksByAuthorIdAsync(authorId);
+            var bookDtos = _mapper.Map<List<BookDto>>(books);
+            return Ok(bookDtos);
         }
 
         /// <summary>
@@ -58,22 +56,16 @@ namespace LibraryApp.API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<BookDto>> GetBooks(Guid authorId, Guid id)
         {
-            try
-            {
-                var book = await _libraryAppDataRepository.GetBookByAuthorIdAsync(authorId, id);
+            var book = await _libraryAppDataRepository.GetBookByAuthorIdAsync(authorId, id);
 
-                if (book == null)
-                {
-                    return NotFound();
-                }
-
-                var bookDto = _mapper.Map<BookDto>(book);
-                return Ok(bookDto);
-            }
-            catch (Exception)
+            if (book == null)
             {
-                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Error");
+                _logger.LogInformation($"Book with id {id} was not found in the database.");
+                return NotFound();
             }
+
+            var bookDto = _mapper.Map<BookDto>(book);
+            return Ok(bookDto);
         }
     }
 }

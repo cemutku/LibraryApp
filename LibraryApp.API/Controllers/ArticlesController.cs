@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.Json;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using LibraryApp.API.Helpers;
 using LibraryApp.API.Mapper;
 using LibraryApp.API.ResourceParameters;
@@ -12,6 +7,11 @@ using LibraryApp.Domain;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace LibraryApp.API.Controllers
 {
@@ -42,47 +42,40 @@ namespace LibraryApp.API.Controllers
         /// Get all articles
         /// </summary>
         /// <returns></returns>
-        [HttpGet(Name = "GetArticles")]        
+        [HttpGet(Name = "GetArticles")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<List<ArticleDto>>> GetArticles([FromQuery] ArticlesResourceParameters articlesResourceParameters)
         {
-            try
+            var articles = await _libraryAppDataRepository.GetArticlesAsync(articlesResourceParameters);
+
+            var previousPageLink = articles.HasPrevious
+                ? CreateArticlesResourceUri(articlesResourceParameters, ResourceUriType.PreviousPage)
+                : null;
+
+            var nextPageLink = articles.HasNext
+                ? CreateArticlesResourceUri(articlesResourceParameters, ResourceUriType.NextPage)
+                : null;
+
+            var paginationMetadata = new
             {
-                var articles = await _libraryAppDataRepository.GetArticlesAsync(articlesResourceParameters);
+                totalCount = articles.TotalCount,
+                pageSize = articles.PageSize,
+                currentPage = articles.CurrentPage,
+                totalPages = articles.TotalPages,
+                previousPageLink,
+                nextPageLink
+            };
 
-                var previousPageLink = articles.HasPrevious 
-                    ? CreateArticlesResourceUri(articlesResourceParameters, ResourceUriType.PreviousPage) 
-                    : null;
-
-                var nextPageLink = articles.HasNext 
-                    ? CreateArticlesResourceUri(articlesResourceParameters, ResourceUriType.NextPage) 
-                    : null;
-
-                var paginationMetadata = new
+            Response.Headers.Add("X-Pagination",
+                JsonSerializer.Serialize(paginationMetadata,
+                new JsonSerializerOptions()
                 {
-                    totalCount = articles.TotalCount,
-                    pageSize = articles.PageSize,
-                    currentPage = articles.CurrentPage,
-                    totalPages = articles.TotalPages,
-                    previousPageLink,
-                    nextPageLink
-                };
+                    Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+                }));
 
-                Response.Headers.Add("X-Pagination", 
-                    JsonSerializer.Serialize(paginationMetadata,
-                    new JsonSerializerOptions() 
-                    { 
-                        Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping 
-                    }));
+            var articleDtos = _mapper.Map<List<ArticleDto>>(articles);
 
-                var articleDtos = _mapper.Map<List<ArticleDto>>(articles);
-
-                return Ok(articleDtos);
-            }
-            catch (Exception)
-            {
-                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Error");
-            }
+            return Ok(articleDtos);
         }
 
         /// <summary>
@@ -96,25 +89,17 @@ namespace LibraryApp.API.Controllers
         [Route("{id}", Name = "GetArticle")]
         public async Task<ActionResult<ArticleDto>> GetArticle(Guid id)
         {
-            try
+            var article = await _libraryAppDataRepository.GetArticleAsync(id);
+
+            if (article == null)
             {
-                var article = await _libraryAppDataRepository.GetArticleAsync(id);
-
-                if (article == null)
-                {
-                    _logger.LogInformation($"Article with id {id} was not found in the database.");
-                    return NotFound();
-                }
-
-                var articleDto = _mapper.Map<ArticleDto>(article);
-
-                return Ok(articleDto);
+                _logger.LogInformation($"Article with id {id} was not found in the database.");
+                return NotFound();
             }
-            catch (Exception ex)
-            {
-                _logger.LogCritical($"Error occured while getting the article with id {id}", ex);                
-                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Error");
-            }
+
+            var articleDto = _mapper.Map<ArticleDto>(article);
+
+            return Ok(articleDto);
         }
 
         /// <summary>
@@ -128,19 +113,12 @@ namespace LibraryApp.API.Controllers
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         public async Task<IActionResult> CreateArticle([FromBody] ArticleForCreationDto articleItem)
         {
-            try
-            {
-                var article = _mapper.Map<Article>(articleItem);
-                _libraryAppDataRepository.Add(article);
+            _logger.LogDebug("Creating article...");
+            var article = _mapper.Map<Article>(articleItem);
+            _libraryAppDataRepository.Add(article);
+            await _libraryAppDataRepository.SaveChangesAsync();
 
-                await _libraryAppDataRepository.SaveChangesAsync();
-
-                return CreatedAtRoute("GetArticle", new { id = article.Id }, article);
-            }
-            catch (Exception)
-            {
-                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Error");
-            }
+            return CreatedAtRoute("GetArticle", new { id = article.Id }, article);
         }
 
         /// <summary>
@@ -156,30 +134,27 @@ namespace LibraryApp.API.Controllers
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         public async Task<ActionResult<ArticleDto>> UpdateArticle(Guid id, [FromBody] ArticleForUpdateDto articleItem)
         {
-            try
+            if (id != articleItem.Id)
             {
-                if (id != articleItem.Id)
-                {
-                    return BadRequest();
-                }
-
-                var currentArticle = await _libraryAppDataRepository.GetArticleAsync(id);
-
-                if (currentArticle == null)
-                {
-                    return NotFound();
-                }
-
-                _mapper.Map(articleItem, currentArticle);
-                await _libraryAppDataRepository.SaveChangesAsync();
-                var articleDto = _mapper.Map<ArticleDto>(currentArticle);
-
-                return Created("", articleDto);
+                _logger.LogInformation($"Article with id {id} was not match articleItem");
+                return BadRequest();
             }
-            catch (Exception)
+
+            var currentArticle = await _libraryAppDataRepository.GetArticleAsync(id);
+
+            if (currentArticle == null)
             {
-                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Error");
+                _logger.LogInformation($"Article with id {id} was not found in the database.");
+                return NotFound();
             }
+
+            _logger.LogDebug("Updating article...");
+
+            _mapper.Map(articleItem, currentArticle);
+            await _libraryAppDataRepository.SaveChangesAsync();
+            var articleDto = _mapper.Map<ArticleDto>(currentArticle);
+
+            return Created("", articleDto);
         }
 
         /// <summary>
@@ -192,24 +167,20 @@ namespace LibraryApp.API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteArticle(Guid id)
         {
-            try
+            var article = await _libraryAppDataRepository.GetArticleAsync(id);
+
+            if (article == null)
             {
-                var article = await _libraryAppDataRepository.GetArticleAsync(id);
-
-                if (article == null)
-                {
-                    return NotFound();
-                }
-
-                _libraryAppDataRepository.Delete(article);
-                await _libraryAppDataRepository.SaveChangesAsync();
-
-                return NoContent();
+                _logger.LogInformation($"Article with id {id} was not found in the database.");
+                return NotFound();
             }
-            catch (Exception)
-            {
-                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Error");
-            }
+
+            _logger.LogDebug("Deleting article...");
+
+            _libraryAppDataRepository.Delete(article);
+            await _libraryAppDataRepository.SaveChangesAsync();
+
+            return NoContent();
         }
 
         /// <summary>
@@ -222,21 +193,14 @@ namespace LibraryApp.API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<List<ArticleDto>>> SearchByReleaseDate(DateTime releaseDate)
         {
-            try
-            {
-                var results = await _libraryAppDataRepository.GetArticlesByReleaseDateAsync(releaseDate);
+            var results = await _libraryAppDataRepository.GetArticlesByReleaseDateAsync(releaseDate);
 
-                if (!results.Any())
-                {
-                    return NotFound();
-                }
-
-                return _mapper.Map<List<ArticleDto>>(results);
-            }
-            catch (Exception)
+            if (!results.Any())
             {
-                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Error");
+                return NotFound();
             }
+
+            return _mapper.Map<List<ArticleDto>>(results);
         }
 
         private string CreateArticlesResourceUri(ArticlesResourceParameters articlesResourceParameters, ResourceUriType resourceUriType)

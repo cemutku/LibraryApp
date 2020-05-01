@@ -1,4 +1,5 @@
 using AutoMapper;
+using LibraryApp.API.Extensions;
 using LibraryApp.API.Mapper;
 using LibraryApp.Data;
 using LibraryApp.Data.Repositories;
@@ -115,6 +116,8 @@ namespace LibraryApp.API
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseCustomExceptionMiddleware();
 
             app.UseHttpsRedirection();
 
