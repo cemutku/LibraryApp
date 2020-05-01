@@ -53,8 +53,9 @@ services:
       - '5000:5000'
     environment:
         'ConnectionStrings__LibraryConnection': "host=postgresdev;port=5432;database=LibraryTestDb;username=postgres;password=P@123;Pooling=true;"
+        'ConnectionStrings__ElasticUrl': "http://elasticsearchdev:9200" 
         NLOG_INTERNAL_LOG_FILE : '/app/internalNLog/internal-log-api.txt'
-        'ConnectionStrings__ElasticUrl': "http://elasticsearchdev:9200"        
+        NLOG_INTERNAL_LOG_LEVEL : 'Trace'               
     volumes: 
        - '.:/app'
     networks:
