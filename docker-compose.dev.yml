@@ -15,11 +15,37 @@ services:
     networks:
       - libraryapp-dev-iso
 
+  elasticsearchdev:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.6.2
+    container_name: elasticsearchdev
+    volumes:
+      - ./config/elk/elasticsearch/custom_elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+    environment:
+      ES_JAVA_OPTS: "-Xmx256m -Xms256m"
+    ports: 
+      - '9200:9200'
+      - '9300:9300'
+    networks:
+      - libraryapp-dev-iso
+
+  kibanadev:
+    image: docker.elastic.co/kibana/kibana:7.6.2
+    container_name: kibanadev
+    volumes:
+      - ./config/elk/kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
+    ports: 
+      - '5601:5601'
+    networks:
+      - libraryapp-dev-iso
+    depends_on:
+      - elasticsearchdev
+
   web.api:
     container_name: 'libraryaspnetcoreapp'
     image: 'libraryaspnetcoreapp'
     depends_on:
       - 'postgresdev'
+      - 'elasticsearchdev'
     build:
       context: .
       dockerfile: LibraryApp.API/libraryAppDev.dockerfile
@@ -27,6 +53,8 @@ services:
       - '5000:5000'
     environment:
         'ConnectionStrings__LibraryConnection': "host=postgresdev;port=5432;database=LibraryTestDb;username=postgres;password=P@123;Pooling=true;"
+        NLOG_INTERNAL_LOG_FILE : '/app/internalNLog/internal-log-api.txt'
+        'ConnectionStrings__ElasticUrl': "http://elasticsearchdev:9200"        
     volumes: 
        - '.:/app'
     networks:
@@ -37,4 +65,4 @@ volumes:
 
 networks:
   libraryapp-dev-iso:
-    driver: bridge
+    driver: bridge 
