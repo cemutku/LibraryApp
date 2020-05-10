@@ -23,4 +23,6 @@ After all these steps, the application is ready for use.
 
 ## Alternative development environment (docker-compose)
 
-For development and dotnet watcher run the `docker-compose -f docker-compose.dev.yml up` in /LibraryApp directory, than hit the http://localhost:5000/index.html and check the API methods in swaggerui
+For development and dotnet watcher run the `docker-compose -f docker-compose.dev.yml up` in /LibraryApp directory, than hit the http://localhost:5000/index.html and check the API methods in swaggerui.
+
+It also has elasticsearch for logging and under http://localhost:5601/app/kibana you can check elasticsearch log records.
