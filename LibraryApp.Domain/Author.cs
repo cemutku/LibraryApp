@@ -16,7 +16,5 @@ namespace LibraryApp.Domain
 
         [MaxLength(500)]
         public string Address { get; set; }
-
-        public ICollection<Article> Articles { get; set; }
     }
 }

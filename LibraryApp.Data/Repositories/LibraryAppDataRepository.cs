@@ -80,6 +80,14 @@ namespace LibraryApp.Data.Repositories
                 .FirstOrDefaultAsync(b => b.AuthorId == authorId && b.Id == bookId);
         }
 
+        public async Task<List<Book>> GetBooksByAuthorIdAndCreationTime(Guid authorId, DateTime createTime)
+        {
+            return await _libraryAppDbContext.Books
+                .Include(a => a.Author)
+                .Where(b => b.AuthorId == authorId && EF.Property<DateTime>(b, "Created") >= createTime)                
+                .ToListAsync();
+        }
+
         public async Task<bool> SaveChangesAsync()
         {
             return (await _libraryAppDbContext.SaveChangesAsync() > 0);

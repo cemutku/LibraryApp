@@ -17,9 +17,9 @@ namespace LibraryApp.API.Controllers
     {
         private readonly ILibraryAppDataRepository _libraryAppDataRepository;
         private readonly IMapper _mapper;
-        private readonly ILogger _logger;
+        private readonly ILogger<BooksController> _logger;
 
-        public BooksController(ILibraryAppDataRepository libraryAppDataRepository, IMapper mapper, ILogger logger)
+        public BooksController(ILibraryAppDataRepository libraryAppDataRepository, IMapper mapper, ILogger<BooksController> logger)
         {
             this._libraryAppDataRepository = libraryAppDataRepository
                 ?? throw new ArgumentNullException(nameof(libraryAppDataRepository));
@@ -66,6 +66,21 @@ namespace LibraryApp.API.Controllers
 
             var bookDto = _mapper.Map<BookDto>(book);
             return Ok(bookDto);
+        }
+
+        /// <summary>
+        /// Get books by specific create time
+        /// </summary>
+        /// <param name="authorId"></param>
+        /// <param name="createTime"></param>
+        /// <returns></returns>
+        [HttpGet("search")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<List<BookDto>>> SearchByCreateTime(Guid authorId, DateTime createTime)
+        {
+            var books = await _libraryAppDataRepository.GetBooksByAuthorIdAndCreationTime(authorId, createTime);
+            var bookDtos = _mapper.Map<List<BookDto>>(books);
+            return Ok(bookDtos);
         }
     }
 }

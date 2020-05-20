@@ -25,5 +25,7 @@ namespace LibraryApp.Data.Repositories
         Task<List<Book>> GetBooksByAuthorIdAsync(Guid authorId);
 
         Task<Book> GetBookByAuthorIdAsync(Guid authorId, Guid bookId);
+
+        Task<List<Book>> GetBooksByAuthorIdAndCreationTime(Guid authorId, DateTime createTime);        
     }
 }

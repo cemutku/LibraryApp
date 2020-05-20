@@ -61,6 +61,14 @@
             <param name="id"></param>
             <returns></returns>
         </member>
+        <member name="M:LibraryApp.API.Controllers.BooksController.SearchByCreateTime(System.Guid,System.DateTime)">
+            <summary>
+            Get books by specific create time
+            </summary>
+            <param name="authorId"></param>
+            <param name="createTime"></param>
+            <returns></returns>
+        </member>
         <member name="P:LibraryApp.API.Mapper.ArticleDto.Id">
             <summary>
             The id of the Article
